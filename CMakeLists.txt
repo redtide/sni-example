@@ -7,7 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(PROJECT_QT_VERSION 5 CACHE STRING "Qt version to use [default: 5]")
+set(PROJECT_QT_VERSION 5 CACHE STRING "Qt version to use                      [default: 5]")
+option(SNI_USE_LIBDBUSMENU_LXQT       "Use the LXQt version of libdbusmenu-qt [default: OFF]" OFF)
 
 set(CMAKE_AUTOMOC ON)
 find_package(QT NAMES Qt${PROJECT_QT_VERSION})
