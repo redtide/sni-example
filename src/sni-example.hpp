@@ -15,13 +15,17 @@ class SNIExample : public QObject
     Q_OBJECT
 
 public:
-    SNIExample(StatusNotifierItem* sni);
+    SNIExample(QObject* parent = nullptr);
     ~SNIExample();
 
-    void onScroll(int delta, Qt::Orientation orientation);
+    void onScroll(int delta, Qt::Orientation);
+    void onSecondaryActivateRequested(const QPoint&);
 
 private:
+    void setVolumeIcon();
+
     StatusNotifierItem* sni_;
     QMenu*              menu_;
     int                 volume_;
+    bool                muted_;
 };
