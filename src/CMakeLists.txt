@@ -1,63 +1,44 @@
 set(PROJECT_SOURCES
-    sni/dbustypes.h
-    sni/dbustypes.cpp
-    sni/statusnotifieritem.h
-    sni/statusnotifieritem.cpp
-    sni/org.kde.StatusNotifierItem.xml
-    sni-example.hpp
-    sni-example.cpp
+    examples/example.hpp
+    examples/example.cpp
+    examples/volume.hpp
+    examples/volume.cpp
 )
+source_group("" FILES ${PROJECT_SOURCES})
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6 AND SNI_USE_LIBDBUSMENU_LXQT)
     find_package(dbusmenu-lxqt REQUIRED)
 else()
-    list(APPEND PROJECT_SOURCES
-        libdbusmenu-qt/dbusmenuexporter.cpp
-        libdbusmenu-qt/dbusmenuexporterdbus_p.cpp
-        libdbusmenu-qt/dbusmenu_p.cpp
-        libdbusmenu-qt/dbusmenushortcut_p.cpp
-        libdbusmenu-qt/dbusmenutypes_p.cpp
-        libdbusmenu-qt/utils.cpp
-        libdbusmenu-qt/dbusmenuexporterdbus_p.h
-        libdbusmenu-qt/dbusmenuexporter.h
-        libdbusmenu-qt/dbusmenuexporterprivate_p.h
-        libdbusmenu-qt/dbusmenu_p.h
-        libdbusmenu-qt/dbusmenushortcut_p.h
-        libdbusmenu-qt/dbusmenutypes_p.h
-        libdbusmenu-qt/debug_p.h
-        libdbusmenu-qt/utils_p.h
-    )
-    qt_add_dbus_adaptor(PROJECT_SOURCES
-        libdbusmenu-qt/com.canonical.dbusmenu.xml
-        libdbusmenu-qt/dbusmenuexporterdbus_p.h
-        DBusMenuExporterDBus
-    )
+    set(HAVE_DBUSMENUQT 1)
+    add_subdirectory(libdbusmenu-qt)
 endif()
 
-source_group("" FILES ${PROJECT_SOURCES})
+if(SNI_USE_KSNI)
+    add_subdirectory(kstatusnotifieritem)
+else()
+    add_subdirectory(statusnotifieritem)
+endif()
 
-qt_add_dbus_adaptor(PROJECT_SOURCES
-    sni/org.kde.StatusNotifierItem.xml
-    sni/statusnotifieritem.h
-    StatusNotifierItem
-)
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION ${PROJECT_SOURCES})
 else()
     add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 endif()
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-   "${CMAKE_CURRENT_BINARY_DIR}"
-   sni
-)
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt::Widgets
     Qt::DBus
 )
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6 AND SNI_USE_LIBDBUSMENU_LXQT)
-    target_link_libraries(${PROJECT_NAME} PRIVATE dbusmenu-lxqt)
+if(SNI_USE_KSNI)
+    target_include_directories(${PROJECT_NAME} PRIVATE src/kstatusnotifieritem)
+    target_link_libraries(${PROJECT_NAME}      PRIVATE kde::statusnotifieritem)
 else()
-    target_include_directories(${PROJECT_NAME} PRIVATE libdbusmenu-qt)
+    target_include_directories(${PROJECT_NAME} PRIVATE src/statusnotifieritem)
+    target_link_libraries(${PROJECT_NAME}      PRIVATE qt::statusnotifieritem)
+endif()
+
+if(SNI_USE_KSNI)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE KSNI=1)
 endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)

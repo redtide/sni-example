@@ -49,6 +49,10 @@ StatusNotifierItem::StatusNotifierItem(QString id, QObject *parent)
     mMenuExporter(nullptr),
     mSessionBus(QDBusConnection::connectToBus(QDBusConnection::SessionBus, mService))
 {
+    qDBusRegisterMetaType<IconPixmap>();
+    qDBusRegisterMetaType<IconPixmapList>();
+    qDBusRegisterMetaType<ToolTip>();
+
     // Separate DBus connection to the session bus is created, because QDbus does not provide
     // a way to register different objects for different services with the same paths.
     // For status notifiers we need different /StatusNotifierItem for each service.
