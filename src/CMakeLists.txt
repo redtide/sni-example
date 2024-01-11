@@ -6,12 +6,12 @@ set(PROJECT_SOURCES
 )
 source_group("" FILES ${PROJECT_SOURCES})
 
-# For some reason KSNI won't work with libdbusmenu-lxqt
+# KSNI needs its own libdbusmenu-qt
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6 AND SNI_USE_LIBDBUSMENU_LXQT AND NOT SNI_USE_KSNI)
     find_package(dbusmenu-lxqt REQUIRED)
 else()
-    set(HAVE_DBUSMENUQT 1)
     add_subdirectory(libdbusmenu-qt)
+    set(HAVE_DBUSMENUQT 1)
 endif()
 
 if(SNI_USE_KSNI)
