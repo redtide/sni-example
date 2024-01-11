@@ -1,12 +1,13 @@
 set(PROJECT_SOURCES
-    examples/example.hpp
-    examples/example.cpp
-    examples/volume.hpp
-    examples/volume.cpp
+    example/example.hpp
+    example/example.cpp
+    example/volume.hpp
+    example/volume.cpp
 )
 source_group("" FILES ${PROJECT_SOURCES})
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6 AND SNI_USE_LIBDBUSMENU_LXQT)
+# For some reason KSNI won't work with libdbusmenu-lxqt
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6 AND SNI_USE_LIBDBUSMENU_LXQT AND NOT SNI_USE_KSNI)
     find_package(dbusmenu-lxqt REQUIRED)
 else()
     set(HAVE_DBUSMENUQT 1)

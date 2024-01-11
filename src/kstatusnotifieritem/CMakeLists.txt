@@ -43,10 +43,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt::Widgets
     Qt::DBus
 )
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6 AND SNI_USE_LIBDBUSMENU_LXQT)
-    target_link_libraries(${PROJECT_NAME} PUBLIC dbusmenu-lxqt)
-else()
-    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
-    target_link_libraries(${PROJECT_NAME}      PUBLIC qt::dbusmenu)
-endif()
-
+#if(${QT_VERSION_MAJOR} GREATER_EQUAL 6 AND SNI_USE_LIBDBUSMENU_LXQT)
+#    target_link_libraries(${PROJECT_NAME} PUBLIC dbusmenu-lxqt)
+#else()
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(${PROJECT_NAME}      PUBLIC qt::dbusmenu)
+#endif()

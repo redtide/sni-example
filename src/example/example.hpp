@@ -25,6 +25,11 @@ public:
     SNIExample(QObject* parent = nullptr);
     ~SNIExample();
 
+private:
+    void setMute(bool);
+    void setVolume(int);
+    void setVolumeIcon(bool showMessage = false);
+
     void onScroll(int delta, Qt::Orientation);
 #if(KSNI)
     void onActivateRequested(bool, const QPoint&);
@@ -33,14 +38,10 @@ public:
 #endif
     void onSecondaryActivateRequested(const QPoint&);
 
-private:
-    void setMute(bool);
-    void setVolume(int);
-    void setVolumeIcon(bool showMessage = false);
-
     StatusNotifierItem* sni_;
-    Volume* volumeMenu_;
-    QMenu*  contextMenu_;
-    int     volume_;
-    bool    muted_;
+    Volume*  volumeMenu_;
+    QMenu*   contextMenu_;
+    QAction* actUseMessage_;
+    int      volume_;
+    bool     muted_;
 };

@@ -4,18 +4,26 @@
 #include "volume.hpp"
 #include <QApplication>
 #include <QMenu>
+#include <QProxyStyle>
+#include <QToolTip>
+#include <QDBusInterface>
 
 SNIExample::SNIExample(QObject* parent)
     : QObject(parent)
     , sni_(new StatusNotifierItem(QApplication::applicationName(), qApp))
     , volumeMenu_(new Volume)
     , contextMenu_(new QMenu)
+    , actUseMessage_(new QAction(tr("&Use message"), contextMenu_))
     , volume_(0)
     , muted_(false)
 {
     sni_->setContextMenu(contextMenu_);
     sni_->setTitle(tr("Volume"));
     sni_->setToolTipTitle(tr("Volume"));
+
+    actUseMessage_->setCheckable(true);
+    contextMenu_->addAction(actUseMessage_);
+
 #if !defined(KSNI)
     sni_->setStatus(QStringLiteral("Active"));
 
@@ -89,7 +97,7 @@ void SNIExample::setVolume(int volume)
     setVolumeIcon();
 }
 
-void SNIExample::setVolumeIcon(bool showMessage)
+void SNIExample::setVolumeIcon(bool showMsg)
 {
     QString iconName;
     if (volume_ <= 0 || muted_) {
@@ -113,11 +121,14 @@ void SNIExample::setVolumeIcon(bool showMessage)
         sni_->setToolTipIconByName(iconName);
         sni_->setToolTipTitle(QString("%1\%").arg(volume_));
 #endif
-        // FIXME:
-        // The volume value on scroll should be shown as tooltip, not as notification message,
-        // but the tooltip delay is too long
-        if (showMessage)
-            sni_->showMessage(QString::number(volume_), QString(), iconName, 250);
+        if (showMsg) {
+            if (actUseMessage_->isChecked()) {
+                sni_->showMessage(QString::number(volume_), QString(), iconName, 250, 1);
+                return;
+            }
+            QToolTip::showText(QCursor::pos(), QString("%1\%").arg(volume_));
+            QToolTip::hideText();
+        }
     }
 }
 
