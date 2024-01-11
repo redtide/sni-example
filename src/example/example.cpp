@@ -2,18 +2,21 @@
 
 #include "example.hpp"
 #include "volume.hpp"
+
 #include <QApplication>
 #include <QMenu>
 #include <QProxyStyle>
 #include <QToolTip>
 #include <QDBusInterface>
 
+#include <algorithm>
+
 SNIExample::SNIExample(QObject* parent)
     : QObject(parent)
     , sni_(new StatusNotifierItem(QApplication::applicationName(), qApp))
     , volumeMenu_(new Volume)
     , contextMenu_(new QMenu)
-    , actUseMessage_(new QAction(tr("&Use message"), contextMenu_))
+    , actUseMessage_(new QAction(tr("Use &notifications"), contextMenu_))
     , volume_(0)
     , muted_(false)
 {
@@ -38,10 +41,18 @@ SNIExample::SNIExample(QObject* parent)
     connect(sni_, &StatusNotifierItem::scrollRequested,            this, &SNIExample::onScroll);
     connect(sni_, &StatusNotifierItem::activateRequested,          this, &SNIExample::onActivateRequested);
     connect(sni_, &StatusNotifierItem::secondaryActivateRequested, this, &SNIExample::onSecondaryActivateRequested);
+
     connect(qApp, &QApplication::aboutToQuit, volumeMenu_,  &QObject::deleteLater);
     connect(qApp, &QApplication::aboutToQuit, contextMenu_, &QObject::deleteLater);
-    connect(volumeMenu_, &Volume::muteToggled,  this, &SNIExample::setMute);
-    connect(volumeMenu_, &Volume::valueChanged, this, &SNIExample::setVolume);
+
+    connect(volumeMenu_, &Volume::muteToggled,  this, [this](bool muted) {
+        muted_ = muted;
+        setVolumeIcon();
+    });
+    connect(volumeMenu_, &Volume::valueChanged, this, [this](int volume) {
+        volume_ = volume;
+        setVolumeIcon();
+    });
 }
 
 SNIExample::~SNIExample()
@@ -50,11 +61,15 @@ SNIExample::~SNIExample()
 
 void SNIExample::onScroll(int delta, Qt::Orientation)
 {
-    if ((volume_ == 100 && delta > 0) || (!volume_ && delta < 0))
+    int volume = volume_;
+    if ((volume >= 100 && delta > 0) || (volume <= 0 && delta < 0))
         return;
 
-    delta > 0 ? volume_ += 10 : volume_ -= 10;
-    volumeMenu_->setVolume(volume_);
+    delta > 0 ? volume += 10 : volume -= 10;
+    volume = std::clamp(volume, 0, 100);
+
+    volumeMenu_->setVolume(volume);
+    volume_ = volume;
     setVolumeIcon(true);
 }
 
@@ -83,18 +98,6 @@ void SNIExample::onSecondaryActivateRequested(const QPoint&)
     muted_ = !muted_;
     setVolumeIcon();
     volumeMenu_->setMute(muted_);
-}
-
-void SNIExample::setMute(bool muted)
-{
-    muted_ = muted;
-    setVolumeIcon();
-}
-
-void SNIExample::setVolume(int volume)
-{
-    volume_ = volume;
-    setVolumeIcon();
 }
 
 void SNIExample::setVolumeIcon(bool showMsg)

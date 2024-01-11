@@ -26,8 +26,6 @@ public:
     ~SNIExample();
 
 private:
-    void setMute(bool);
-    void setVolume(int);
     void setVolumeIcon(bool showMessage = false);
 
     void onScroll(int delta, Qt::Orientation);
