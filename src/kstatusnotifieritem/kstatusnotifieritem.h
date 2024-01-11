@@ -423,7 +423,8 @@ public:
      * @param icon icon to be shown to the user
      * @param timeout how much time will elaps before hiding the message
      */
-    void showMessage(const QString &title, const QString &message, const QString &icon, int timeout = 10000);
+    void showMessage(const QString &title, const QString &message, const QString &icon,
+        int timeout = 10000, uint id = 0);
 
     /**
      * @return the last provided token to be used with Wayland's xdg_activation_v1

@@ -295,11 +295,11 @@ void StatusNotifierItem::Scroll(int delta, const QString &orientation)
 }
 
 void StatusNotifierItem::showMessage(const QString& title, const QString& msg,
-                                     const QString& iconName, int secs)
+                                     const QString& iconName, int secs, uint id)
 {
     QDBusInterface interface(QLatin1String("org.freedesktop.Notifications"), QLatin1String("/org/freedesktop/Notifications"),
                              QLatin1String("org.freedesktop.Notifications"), mSessionBus);
-    interface.call(QLatin1String("Notify"), mTitle, (uint) 0, iconName, title,
+    interface.call(QLatin1String("Notify"), mTitle, id, iconName, title,
                    msg, QStringList(), QVariantMap(), secs);
 }
 

@@ -144,7 +144,7 @@ public Q_SLOTS:
     void ContextMenu(int x, int y);
     void Scroll(int delta, const QString &orientation);
 
-    void showMessage(const QString &title, const QString &msg, const QString &iconName, int secs);
+    void showMessage(const QString &title, const QString &msg, const QString &iconName, int secs, uint id = 0);
 
 private:
     void registerToHost();

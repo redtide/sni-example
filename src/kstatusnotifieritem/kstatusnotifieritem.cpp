@@ -596,7 +596,8 @@ bool KStatusNotifierItem::standardActionsEnabled() const
     return d->standardActionsEnabled;
 }
 
-void KStatusNotifierItem::showMessage(const QString &title, const QString &message, const QString &icon, int timeout)
+void KStatusNotifierItem::showMessage(const QString &title, const QString &message, const QString &icon,
+    int timeout, uint id)
 {
 #ifdef QT_DBUS_LIB
     if (!d->notificationsClient) {
@@ -605,7 +606,6 @@ void KStatusNotifierItem::showMessage(const QString &title, const QString &messa
                                                                      QDBusConnection::sessionBus());
     }
 
-    uint id = 0;
     QVariantMap hints;
 
     QString desktopFileName = QGuiApplication::desktopFileName();
